@@ -93,8 +93,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Statistics calculation
   - Comprehensive unit tests for all hierarchy components
 
+- **Phase 5: Storage Format Conversion (Complete)**
+  - `StorageFormatBuilder` for XHTML generation:
+    - XML escaping and CDATA handling
+    - HTML element builders (headings, paragraphs, lists, tables)
+    - Inline formatting (bold, italic, code, links, images)
+    - Confluence table classes
+  - `MacroRenderer` for Confluence macros:
+    - Code block macro with syntax highlighting
+    - Table of contents macro
+    - Panel macros (info, note, warning, tip)
+    - Internal page links (`ac:link`)
+    - Attachment and external images
+    - Task list macro
+    - Status and expand macros
+    - Language mapping for code blocks
+  - `ConfluenceConverter` (CommonMark AST visitor):
+    - Full markdown to storage format conversion
+    - Headings, paragraphs, blockquotes
+    - Bold, italic, inline code
+    - Fenced and indented code blocks
+    - Ordered and unordered lists
+    - GFM tables
+    - Task lists → Confluence task macro
+    - External links and images
+    - Local images as attachments
+    - Configurable TOC insertion
+    - Page link resolution support
+  - Comprehensive unit tests for all components
+
 ### Planned
-- Markdown to Confluence storage format conversion
 - Sync engine with create/update/delete operations
 - Dry-run mode for previewing changes
 - State persistence for incremental syncs
@@ -194,8 +222,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [x] Hierarchy validation and statistics
 - [x] Unit tests for all hierarchy components
 
+### 2024-XX-XX - Phase 5: Storage Format Conversion
+- [x] StorageFormatBuilder for XHTML generation
+- [x] MacroRenderer for Confluence macros
+- [x] ConfluenceConverter with CommonMark visitor
+- [x] Code block conversion with language mapping
+- [x] Table conversion with Confluence classes
+- [x] Task list to Confluence task macro
+- [x] Image handling (attachment and external)
+- [x] TOC macro insertion
+- [x] Unit tests for all converter components
+
 ### Next Steps
-- [ ] Phase 5: Storage format conversion
 - [ ] Phase 6: Sync engine
 - [ ] Phase 7: CLI implementation enhancements
 - [ ] Phase 8: Testing
