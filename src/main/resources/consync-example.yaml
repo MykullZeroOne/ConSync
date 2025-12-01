@@ -1,0 +1,94 @@
+# ConSync Configuration Example
+# Copy this file to your documentation directory as 'consync.yaml'
+
+# Confluence connection settings
+confluence:
+  # Your Confluence instance URL
+  base_url: "https://your-domain.atlassian.net/wiki"
+
+  # For Confluence Cloud: use email + API token
+  username: "your-email@example.com"
+  api_token: "${CONFLUENCE_API_TOKEN}"  # Set via environment variable
+
+  # For Confluence Data Center/Server: use Personal Access Token instead
+  # pat: "${CONFLUENCE_PAT}"
+
+  # Request timeout in seconds (default: 30)
+  timeout: 30
+
+  # Number of retry attempts for failed requests (default: 3)
+  retry_count: 3
+
+# Space configuration
+space:
+  # Required: Confluence space key (uppercase)
+  key: "DOCS"
+
+  # Optional: Space display name
+  name: "Documentation"
+
+  # Optional: Root page to nest all content under
+  # Use either root_page_id or root_page_title
+  # root_page_id: "123456789"
+  root_page_title: "Documentation Home"
+
+# Content settings
+content:
+  # Optional: Default root page title for synced content
+  root_page: "Documentation Home"
+
+  # How to determine page titles
+  # Options: filename, frontmatter, first_heading
+  title_source: filename
+
+  # Table of contents settings
+  toc:
+    enabled: true
+    depth: 3           # 1-6, heading levels to include
+    position: top      # top, bottom, or none
+
+  # Frontmatter handling
+  frontmatter:
+    strip: true        # Remove frontmatter from output
+    use_title: true    # Use title from frontmatter if available
+
+# Sync behavior
+sync:
+  # Delete Confluence pages that no longer exist locally
+  delete_orphans: false
+
+  # Update pages even if content hasn't changed
+  update_unchanged: false
+
+  # Preserve existing labels on pages
+  preserve_labels: true
+
+  # How to handle conflicts: local, remote, or ask
+  conflict_resolution: local
+
+  # Location of sync state file (relative to doc directory)
+  state_file: ".consync/state.json"
+
+# File handling
+files:
+  # Glob patterns for files to include
+  include:
+    - "**/*.md"
+
+  # Glob patterns for files to exclude
+  exclude:
+    - "**/node_modules/**"
+    - "**/_drafts/**"
+    - "**/README.md"
+    - "**/.git/**"
+
+  # Filename used for directory index pages
+  index_file: "index.md"
+
+# Logging settings
+logging:
+  # Log level: debug, info, warn, error
+  level: info
+
+  # Optional: Log file path
+  # file: "/path/to/consync.log"

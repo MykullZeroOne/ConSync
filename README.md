@@ -15,7 +15,7 @@ ConSync is a Kotlin command-line application that synchronizes local Markdown do
 ### Prerequisites
 
 - JDK 17 or higher
-- Gradle 8.x (or use the included Gradle wrapper)
+- Maven 3.9.x or higher
 
 ### Build from Source
 
@@ -25,13 +25,20 @@ git clone https://github.com/yourusername/consync.git
 cd consync
 
 # Build the application
-./gradlew build
+mvn clean package
 
-# Create distributable
-./gradlew installDist
+# The fat JAR will be at target/consync.jar
 ```
 
-The executable will be available at `build/install/consync/bin/consync`.
+### Run the Application
+
+```bash
+# Using the fat JAR
+java -jar target/consync.jar --help
+
+# Or run directly with Maven
+mvn exec:java -Dexec.args="--help"
+```
 
 ## Configuration
 
@@ -60,7 +67,7 @@ content:
 # Sync behavior
 sync:
   delete_orphans: false           # Remove Confluence pages not in local files
-  preserve_metadata: true         # Keep Confluence page metadata on update
+  preserve_labels: true           # Keep Confluence page labels on update
   conflict_resolution: "local"    # local, remote, or ask
 
 # File handling
@@ -73,19 +80,21 @@ files:
     - "**/README.md"              # Optionally exclude README
 ```
 
+See `src/main/resources/consync-example.yaml` for a complete configuration example with all options.
+
 ## Usage
 
 ### Basic Sync
 
 ```bash
 # Sync markdown files from current directory
-consync sync .
+java -jar consync.jar sync .
 
 # Sync from a specific directory
-consync sync /path/to/docs
+java -jar consync.jar sync /path/to/docs
 
 # Dry run - preview changes without pushing
-consync sync --dry-run /path/to/docs
+java -jar consync.jar sync --dry-run /path/to/docs
 ```
 
 ### Commands
@@ -97,22 +106,30 @@ consync sync <directory>
 # Validate configuration file
 consync validate <directory>
 
-# List pages that would be affected
+# Show current sync status
 consync status <directory>
 
-# Pull current state from Confluence (compare only)
+# Show differences between local and Confluence
 consync diff <directory>
 ```
 
-### Options
+### Global Options
 
 | Option | Description |
 |--------|-------------|
-| `--dry-run` | Preview changes without pushing to Confluence |
-| `--force` | Force update all pages regardless of change detection |
-| `--verbose` | Enable detailed logging output |
-| `--config <file>` | Specify alternate config file location |
-| `--space <key>` | Override space key from config |
+| `-v, --verbose` | Enable verbose output |
+| `-d, --debug` | Enable debug output |
+| `--version` | Show version information |
+| `--help` | Show help message |
+
+### Sync Options
+
+| Option | Description |
+|--------|-------------|
+| `-n, --dry-run` | Preview changes without pushing to Confluence |
+| `-f, --force` | Force update all pages regardless of change detection |
+| `-c, --config <file>` | Specify alternate config file location |
+| `-s, --space <key>` | Override space key from config |
 
 ## Markdown Hierarchy
 
@@ -148,14 +165,14 @@ ConSync supports multiple authentication methods:
 
 ```bash
 export CONFLUENCE_API_TOKEN="your-api-token"
-consync sync /path/to/docs
+java -jar consync.jar sync /path/to/docs
 ```
 
 ### Personal Access Token (Data Center/Server)
 
 ```bash
 export CONFLUENCE_PAT="your-personal-access-token"
-consync sync /path/to/docs
+java -jar consync.jar sync /path/to/docs
 ```
 
 ## Development
@@ -163,19 +180,40 @@ consync sync /path/to/docs
 ### Build
 
 ```bash
-./gradlew build
+mvn clean package
 ```
 
 ### Run Tests
 
 ```bash
-./gradlew test
+mvn test
 ```
 
 ### Run from Source
 
 ```bash
-./gradlew run --args="sync /path/to/docs"
+mvn exec:java -Dexec.args="sync /path/to/docs"
+```
+
+### Project Structure
+
+```
+src/
+├── main/
+│   ├── kotlin/com/consync/
+│   │   ├── Main.kt              # Application entry point
+│   │   ├── cli/                 # CLI commands (Clikt)
+│   │   ├── config/              # Configuration handling
+│   │   ├── core/                # Core business logic
+│   │   ├── service/             # Business services
+│   │   ├── client/              # External integrations
+│   │   ├── model/               # Domain models
+│   │   └── util/                # Utilities
+│   └── resources/
+│       ├── logback.xml          # Logging configuration
+│       └── consync-example.yaml # Example config
+└── test/
+    └── kotlin/com/consync/      # Unit tests
 ```
 
 ## License
