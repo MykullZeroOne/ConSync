@@ -70,9 +70,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Link graph building
   - Comprehensive unit tests for all components
 
+- **Phase 4: Hierarchy Management (Complete)**
+  - `PageNode` tree structure model:
+    - Parent/child relationships
+    - Depth, ancestors, descendants traversal
+    - Virtual nodes for directories without index.md
+    - Sorting by weight and title
+    - Path and ID-based lookup
+  - `HierarchyBuilder` to construct page tree:
+    - Directory structure to tree conversion
+    - index.md files as directory pages
+    - Virtual node creation for empty directories
+    - Weight-based sorting
+    - Confluence ID preservation from frontmatter
+  - `HierarchyResolver` for relationships:
+    - Internal link resolution to page nodes
+    - Common ancestor finding
+    - Relative path computation
+    - Hierarchy validation
+    - Broken link detection
+    - Backlink building
+    - Statistics calculation
+  - Comprehensive unit tests for all hierarchy components
+
 ### Planned
 - Markdown to Confluence storage format conversion
-- Page hierarchy management
 - Sync engine with create/update/delete operations
 - Dry-run mode for previewing changes
 - State persistence for incremental syncs
@@ -162,8 +184,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [x] Content hashing (SHA-256)
 - [x] Unit tests for all markdown components
 
+### 2024-XX-XX - Phase 4: Hierarchy Management
+- [x] PageNode tree structure model
+- [x] HierarchyBuilder for tree construction
+- [x] HierarchyResolver for relationships
+- [x] Virtual nodes for directories without index.md
+- [x] Link resolution and backlinks
+- [x] Broken link detection
+- [x] Hierarchy validation and statistics
+- [x] Unit tests for all hierarchy components
+
 ### Next Steps
-- [ ] Phase 4: Hierarchy management
 - [ ] Phase 5: Storage format conversion
 - [ ] Phase 6: Sync engine
 - [ ] Phase 7: CLI implementation enhancements
