@@ -45,8 +45,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Factory class for easy client creation
   - Unit tests and WireMock integration tests
 
+- **Phase 3: Markdown Processing (Complete)**
+  - `MarkdownDocument` model with comprehensive metadata:
+    - Relative/absolute paths, content, frontmatter
+    - Title, links, images, headings
+    - Content hash for change detection
+  - `FileScanner` for markdown file discovery:
+    - Glob pattern matching for include/exclude
+    - Recursive directory scanning
+    - Hidden directory filtering
+  - `FrontmatterParser` for YAML frontmatter:
+    - Standard fields: title, description, tags, author, date
+    - Custom properties support
+    - Frontmatter stripping
+  - `MarkdownParser` with CommonMark:
+    - GFM tables, task lists, autolinks extensions
+    - Configurable title source (filename, frontmatter, first heading)
+    - Heading extraction with anchor generation
+    - Content hashing (SHA-256)
+  - `LinkExtractor` for internal links:
+    - Internal/external link detection
+    - Relative path resolution
+    - Image extraction
+    - Link graph building
+  - Comprehensive unit tests for all components
+
 ### Planned
-- Markdown parsing with CommonMark
 - Markdown to Confluence storage format conversion
 - Page hierarchy management
 - Sync engine with create/update/delete operations
@@ -128,8 +152,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [x] Unit tests for serialization
 - [x] WireMock integration tests
 
+### 2024-XX-XX - Phase 3: Markdown Processing
+- [x] MarkdownDocument model classes
+- [x] FileScanner for markdown discovery
+- [x] FrontmatterParser for YAML frontmatter
+- [x] MarkdownParser with CommonMark
+- [x] LinkExtractor for internal links
+- [x] Heading extraction and anchor generation
+- [x] Content hashing (SHA-256)
+- [x] Unit tests for all markdown components
+
 ### Next Steps
-- [ ] Phase 3: Markdown processing
 - [ ] Phase 4: Hierarchy management
 - [ ] Phase 5: Storage format conversion
 - [ ] Phase 6: Sync engine
