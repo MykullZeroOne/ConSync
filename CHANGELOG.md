@@ -22,8 +22,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Example configuration file (`consync-example.yaml`)
   - Unit tests for ConfigLoader and ConfigValidator
 
+- **Phase 2: Confluence API Client (Complete)**
+  - Full Confluence REST API client interface (`ConfluenceClient`)
+  - OkHttp-based implementation (`ConfluenceClientImpl`)
+  - API model classes:
+    - `Page`, `Space`, `Attachment` models
+    - `CreatePageRequest`, `UpdatePageRequest` DTOs
+    - `SearchResult`, `ContentResponse` for API responses
+  - Authentication support:
+    - Basic Auth with API token (Confluence Cloud)
+    - Bearer token with PAT (Confluence Data Center/Server)
+  - Comprehensive exception hierarchy:
+    - `AuthenticationException` (401)
+    - `ForbiddenException` (403)
+    - `NotFoundException` (404)
+    - `ConflictException` (409)
+    - `RateLimitException` (429)
+    - `ServerException` (5xx)
+    - `NetworkException`, `MaxRetriesExceededException`
+  - Retry logic with exponential backoff
+  - Request/response logging interceptor
+  - Factory class for easy client creation
+  - Unit tests and WireMock integration tests
+
 ### Planned
-- Confluence REST API client
 - Markdown parsing with CommonMark
 - Markdown to Confluence storage format conversion
 - Page hierarchy management
@@ -93,8 +115,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [x] Logback logging configuration
 - [x] Unit tests for configuration
 
+### 2024-XX-XX - Phase 2: Confluence API Client
+- [x] ConfluenceClient interface with all operations
+- [x] ConfluenceClientImpl with OkHttp
+- [x] API model classes (Page, Space, Attachment, etc.)
+- [x] Request/response DTOs
+- [x] Exception hierarchy for error handling
+- [x] Basic Auth support (Cloud)
+- [x] PAT/Bearer token support (Data Center)
+- [x] Retry logic with exponential backoff
+- [x] ConfluenceClientFactory for easy instantiation
+- [x] Unit tests for serialization
+- [x] WireMock integration tests
+
 ### Next Steps
-- [ ] Phase 2: Confluence API client
 - [ ] Phase 3: Markdown processing
 - [ ] Phase 4: Hierarchy management
 - [ ] Phase 5: Storage format conversion
