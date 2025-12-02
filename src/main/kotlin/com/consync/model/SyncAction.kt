@@ -70,7 +70,7 @@ data class SyncAction(
             pageNode = pageNode,
             confluenceId = null,
             title = pageNode.title,
-            relativePath = pageNode.relativePath,
+            relativePath = pageNode.path.toString(),
             parentId = parentId,
             reason = "New page",
             contentHash = contentHash
@@ -90,7 +90,7 @@ data class SyncAction(
             pageNode = pageNode,
             confluenceId = confluenceId,
             title = pageNode.title,
-            relativePath = pageNode.relativePath,
+            relativePath = pageNode.path.toString(),
             parentId = parentId,
             reason = reason,
             contentHash = contentHash
@@ -126,7 +126,7 @@ data class SyncAction(
             pageNode = pageNode,
             confluenceId = confluenceId,
             title = pageNode.title,
-            relativePath = pageNode.relativePath,
+            relativePath = pageNode.path.toString(),
             parentId = newParentId,
             reason = "Parent changed",
             previousParentId = previousParentId
@@ -144,7 +144,7 @@ data class SyncAction(
             pageNode = pageNode,
             confluenceId = confluenceId,
             title = pageNode.title,
-            relativePath = pageNode.relativePath,
+            relativePath = pageNode.path.toString(),
             parentId = null,
             reason = reason
         )

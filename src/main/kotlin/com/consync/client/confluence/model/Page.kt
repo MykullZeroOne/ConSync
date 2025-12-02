@@ -42,7 +42,8 @@ data class Version(
     val minorEdit: Boolean = false,
     val message: String? = null,
     val by: User? = null,
-    val when: String? = null
+    @SerialName("when")
+    val timestamp: String? = null
 )
 
 /**

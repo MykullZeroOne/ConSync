@@ -57,7 +57,7 @@ class HierarchyBuilderTest {
     }
 
     @Test
-    fun `should use index.md for root`() {
+    fun `should use index md for root`() {
         val docs = listOf(
             createDoc("index.md", title = "Home Page"),
             createDoc("about.md")

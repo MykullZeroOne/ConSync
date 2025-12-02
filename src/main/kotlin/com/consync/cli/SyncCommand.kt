@@ -3,7 +3,6 @@ package com.consync.cli
 import com.consync.config.ConfigLoader
 import com.consync.config.ConfigValidator
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.default
 import com.github.ajalt.clikt.parameters.options.flag
@@ -44,20 +43,6 @@ class SyncCommand : CliktCommand(
         "--space", "-s",
         help = "Override space key from config"
     )
-
-    override fun help(context: Context): String = """
-        Synchronize local Markdown files to Confluence.
-
-        This command reads Markdown files from the specified directory,
-        converts them to Confluence storage format, and creates or updates
-        pages in your Confluence space.
-
-        Examples:
-          consync sync .
-          consync sync /path/to/docs
-          consync sync --dry-run /path/to/docs
-          consync sync --force --space MYSPACE /path/to/docs
-    """.trimIndent()
 
     override fun run() {
         logger.info("Starting sync from directory: $directory")

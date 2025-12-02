@@ -1,8 +1,7 @@
 package com.consync.service
 
 import com.consync.client.confluence.ConfluenceClient
-import com.consync.client.confluence.model.CreatePageRequest
-import com.consync.client.confluence.model.UpdatePageRequest
+import com.consync.client.confluence.model.*
 import com.consync.config.Config
 import com.consync.core.converter.ConfluenceConverter
 import com.consync.model.*
@@ -140,10 +139,10 @@ class SyncExecutor(
 
             // Create page request
             val request = CreatePageRequest(
-                spaceKey = config.space.key,
                 title = action.title,
-                body = storageFormat,
-                parentId = parentId
+                space = SpaceReference(key = config.space.key),
+                body = Body(storage = Storage(value = storageFormat)),
+                ancestors = parentId?.let { listOf(PageReference(id = it)) }
             )
 
             val createdPage = client.createPage(request)
@@ -175,7 +174,7 @@ class SyncExecutor(
 
             // Get current page version
             val currentPage = client.getPage(confluenceId, listOf("version"))
-            val newVersion = currentPage.version.number + 1
+            val newVersion = currentPage.version?.number?.plus(1) ?: 1
 
             // Convert content
             val content = pageNode.document?.content ?: ""
@@ -183,14 +182,16 @@ class SyncExecutor(
 
             // Update page request
             val request = UpdatePageRequest(
+                id = confluenceId,
                 title = action.title,
-                body = storageFormat,
-                version = newVersion,
-                parentId = action.parentId
+                space = SpaceReference(key = config.space.key),
+                body = Body(storage = Storage(value = storageFormat)),
+                version = VersionUpdate(number = newVersion),
+                ancestors = action.parentId?.let { listOf(PageReference(id = it)) }
             )
 
             val updatedPage = client.updatePage(confluenceId, request)
-            logger.info("Updated page '{}' to version {}", action.title, updatedPage.version.number)
+            logger.info("Updated page '{}' to version {}", action.title, updatedPage.version?.number ?: newVersion)
 
             return ActionResult.success(
                 action = action,
@@ -269,13 +270,13 @@ class SyncExecutor(
         val parentNode = pageNode.parent ?: return config.space.rootPageId
 
         // Check in created pages first
-        val createdParentId = createdPageIds[parentNode.relativePath]
+        val createdParentId = createdPageIds[parentNode.path.toString()]
         if (createdParentId != null) {
             return createdParentId
         }
 
         // Check in existing state
-        val parentState = state.getPage(parentNode.relativePath)
+        val parentState = state.getPage(parentNode.path.toString())
         return parentState?.confluenceId ?: config.space.rootPageId
     }
 

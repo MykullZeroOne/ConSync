@@ -14,7 +14,7 @@ class LinkExtractorTest {
     private val extractor = LinkExtractor()
     private val parser = Parser.builder().build()
 
-    private fun parseMarkdown(content: String) = parser.parse(content)
+    private fun parseMarkdown(content: String) = parser.parse(content) as org.commonmark.node.Document
 
     @Test
     fun `should extract internal markdown links`() {

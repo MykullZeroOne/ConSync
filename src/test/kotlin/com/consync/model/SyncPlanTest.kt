@@ -128,9 +128,11 @@ class SyncPlanTest {
     }
 
     private fun createMockPageNode(title: String): PageNode {
+        val pathStr = "${title.lowercase().replace(" ", "-")}.md"
         return PageNode(
+            id = pathStr,
             title = title,
-            relativePath = "${title.lowercase().replace(" ", "-")}.md",
+            path = java.nio.file.Paths.get(pathStr),
             document = null,
             isVirtual = false
         )
@@ -208,8 +210,9 @@ class SyncActionTest {
 
     private fun createMockPageNode(title: String, path: String): PageNode {
         return PageNode(
+            id = path,
             title = title,
-            relativePath = path,
+            path = java.nio.file.Paths.get(path),
             document = null,
             isVirtual = false
         )

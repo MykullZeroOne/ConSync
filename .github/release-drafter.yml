@@ -1,0 +1,173 @@
+# Release Drafter Configuration
+# Automatically drafts release notes from pull requests and commits
+
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+# Categories for organizing changes
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feature'
+      - 'enhancement'
+    collapse-after: 5
+
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+    collapse-after: 5
+
+  - title: '📝 Documentation'
+    labels:
+      - 'documentation'
+      - 'docs'
+    collapse-after: 3
+
+  - title: '🔧 Maintenance'
+    labels:
+      - 'chore'
+      - 'dependencies'
+      - 'refactor'
+    collapse-after: 3
+
+  - title: '⚡ Performance'
+    labels:
+      - 'performance'
+      - 'optimization'
+
+  - title: '🔒 Security'
+    labels:
+      - 'security'
+
+  - title: '⚠️ Breaking Changes'
+    labels:
+      - 'breaking'
+      - 'breaking-change'
+
+# Automatically categorize PRs based on branch names
+category-template: |
+  ### $TITLE
+
+# Change template for each item
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+
+# Automatically label PRs based on branch names
+autolabeler:
+  - label: 'feature'
+    branch:
+      - '/^feat(ure)?[/-].+/'
+    title:
+      - '/^feat(\(.+\))?:/i'
+
+  - label: 'fix'
+    branch:
+      - '/^fix[/-].+/'
+      - '/^hotfix[/-].+/'
+    title:
+      - '/^fix(\(.+\))?:/i'
+
+  - label: 'documentation'
+    branch:
+      - '/^docs?[/-].+/'
+    title:
+      - '/^docs?(\(.+\))?:/i'
+    files:
+      - '*.md'
+      - 'docs/**/*'
+
+  - label: 'chore'
+    branch:
+      - '/^chore[/-].+/'
+    title:
+      - '/^chore(\(.+\))?:/i'
+
+  - label: 'dependencies'
+    files:
+      - 'pom.xml'
+      - '**/pom.xml'
+
+  - label: 'breaking'
+    title:
+      - '/^[^:]+!:/i'
+      - '/breaking/i'
+
+# Version resolver
+version-resolver:
+  major:
+    labels:
+      - 'major'
+      - 'breaking'
+      - 'breaking-change'
+  minor:
+    labels:
+      - 'minor'
+      - 'feature'
+      - 'enhancement'
+  patch:
+    labels:
+      - 'patch'
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+      - 'chore'
+      - 'dependencies'
+  default: patch
+
+# Exclude labels from release notes
+exclude-labels:
+  - 'skip-changelog'
+  - 'wip'
+  - 'duplicate'
+  - 'invalid'
+
+# Exclude contributors
+exclude-contributors:
+  - 'dependabot'
+  - 'dependabot[bot]'
+
+# Template for release notes
+template: |
+  ## What's Changed
+
+  $CHANGES
+
+  ## Installation
+
+  ### macOS/Linux (Homebrew)
+  ```bash
+  brew tap yourusername/consync
+  brew install consync
+  ```
+
+  ### Windows (Scoop)
+  ```powershell
+  scoop bucket add consync https://github.com/yourusername/scoop-consync
+  scoop install consync
+  ```
+
+  ### Windows (Chocolatey)
+  ```powershell
+  choco install consync
+  ```
+
+  ### Direct Download
+  Download the appropriate package for your platform:
+  - **macOS/Linux**: `consync-$RESOLVED_VERSION-unix.tar.gz`
+  - **Windows**: `consync-$RESOLVED_VERSION-windows.zip`
+  - **Universal JAR**: `consync-$RESOLVED_VERSION.jar`
+
+  All downloads include SHA256 checksums for verification.
+
+  ## Documentation
+
+  - 📖 [Installation Guide](https://github.com/$OWNER/$REPOSITORY/blob/main/docs/INSTALL_USERS.md)
+  - 📚 [Documentation](https://github.com/$OWNER/$REPOSITORY/blob/main/README.md)
+  - 🎯 [Examples](https://github.com/$OWNER/$REPOSITORY/tree/main/examples)
+
+  ## Contributors
+
+  $CONTRIBUTORS
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION

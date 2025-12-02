@@ -1,0 +1,111 @@
+# ConSync Configuration Example
+# This is a complete configuration file for ConSync showing all available options
+
+# Confluence connection settings
+confluence:
+  # Base URL of your Confluence instance
+  # For Cloud: https://your-domain.atlassian.net/wiki
+  # For Data Center/Server: https://confluence.yourcompany.com
+  base_url: "https://your-domain.atlassian.net/wiki"
+
+  # Username (email for Cloud)
+  username: "your-email@example.com"
+
+  # API token (for Confluence Cloud)
+  # Create at: https://id.atlassian.com/manage-profile/security/api-tokens
+  # Use environment variable for security
+  api_token: "${CONFLUENCE_API_TOKEN}"
+
+  # Personal Access Token (for Data Center/Server)
+  # Uncomment to use PAT instead of username/api_token
+  # pat: "${CONFLUENCE_PAT}"
+
+  # Request timeout in seconds
+  timeout: 30
+
+  # Number of retry attempts for failed requests
+  retry_count: 3
+
+# Confluence space configuration
+space:
+  # Space key (visible in Confluence URL)
+  key: "DOCS"
+
+  # Optional: Space display name
+  name: "Documentation"
+
+  # Optional: Root page ID (if you want to sync under a specific page)
+  # root_page_id: "123456789"
+
+  # Optional: Root page title (alternative to root_page_id)
+  root_page_title: "ConSync Documentation"
+
+# Content handling configuration
+content:
+  # Root page for all synced content
+  root_page: "ConSync Documentation"
+
+  # How to determine page titles
+  # Options: filename, frontmatter, first_heading
+  title_source: filename
+
+  # Table of contents configuration
+  toc:
+    # Generate table of contents for each page
+    enabled: true
+
+    # Maximum heading depth to include
+    depth: 3
+
+    # TOC position: top, bottom, none
+    position: top
+
+  # Frontmatter handling
+  frontmatter:
+    # Remove YAML frontmatter from content
+    strip: true
+
+    # Use title from frontmatter if available
+    use_title: true
+
+# Sync behavior configuration
+sync:
+  # Delete Confluence pages that don't exist locally
+  delete_orphans: false
+
+  # Update pages even if content hasn't changed
+  update_unchanged: false
+
+  # Keep existing Confluence labels when updating pages
+  preserve_labels: true
+
+  # Conflict resolution strategy
+  # Options: local (prefer local), remote (prefer remote), ask (prompt user)
+  conflict_resolution: local
+
+  # Path to state file for tracking sync status
+  state_file: ".consync/state.json"
+
+# File inclusion/exclusion configuration
+files:
+  # File patterns to include
+  include:
+    - "**/*.md"
+
+  # File patterns to exclude
+  exclude:
+    - "**/node_modules/**"
+    - "**/_drafts/**"
+    - "**/README.md"
+    - "**/.git/**"
+
+  # Name of index files that represent directories
+  index_file: "index.md"
+
+# Logging configuration
+logging:
+  # Log level: debug, info, warn, error
+  level: info
+
+  # Optional: Write logs to file
+  # file: ".consync/consync.log"

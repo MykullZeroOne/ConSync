@@ -241,8 +241,9 @@ class DiffServiceTest {
 
     private fun createRootNode(vararg children: PageNode): PageNode {
         val root = PageNode(
+            id = "",
             title = "Root",
-            relativePath = "",
+            path = java.nio.file.Paths.get(""),
             document = null,
             isVirtual = true
         )
@@ -252,19 +253,22 @@ class DiffServiceTest {
 
     private fun createPageNode(title: String, path: String, content: String): PageNode {
         val document = MarkdownDocument(
-            relativePath = path,
+            relativePath = java.nio.file.Path.of(path),
             absolutePath = java.nio.file.Path.of("/test/$path"),
+            rawContent = content,
             content = content,
-            frontmatter = null,
+            frontmatter = com.consync.core.markdown.Frontmatter.EMPTY,
             title = title,
             links = emptyList(),
             images = emptyList(),
             headings = emptyList(),
+            lastModified = java.time.Instant.now(),
             contentHash = ""
         )
         return PageNode(
+            id = path,
             title = title,
-            relativePath = path,
+            path = java.nio.file.Path.of(path),
             document = document,
             isVirtual = false
         )

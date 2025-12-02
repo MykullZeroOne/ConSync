@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>consync</id>
+    <version>1.0.0</version>
+    <packageSourceUrl>https://github.com/yourusername/consync</packageSourceUrl>
+    <owners>yourusername</owners>
+
+    <title>ConSync</title>
+    <authors>Your Name</authors>
+    <projectUrl>https://github.com/yourusername/consync</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/yourusername/consync/main/docs/icon.png</iconUrl>
+    <licenseUrl>https://github.com/yourusername/consync/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/yourusername/consync</projectSourceUrl>
+    <docsUrl>https://github.com/yourusername/consync/blob/main/README.md</docsUrl>
+    <bugTrackerUrl>https://github.com/yourusername/consync/issues</bugTrackerUrl>
+    <tags>consync confluence markdown documentation sync</tags>
+
+    <summary>Synchronize Markdown documentation with Confluence</summary>
+    <description>
+ConSync is a command-line tool that synchronizes local Markdown documentation with Atlassian Confluence.
+
+## Features
+
+- **Markdown to Confluence**: Convert and sync Markdown files to Confluence pages
+- **Hierarchy Preservation**: Maintain directory structure as page hierarchy
+- **Smart Link Conversion**: Automatically convert Markdown links to Confluence page links
+- **Configuration-Driven**: Flexible YAML configuration
+- **Bidirectional Sync**: Keep local and remote content synchronized
+
+## Requirements
+
+- Java 17 or higher
+
+## Usage
+
+After installation, configure authentication:
+
+For Confluence Cloud:
+```
+$env:CONFLUENCE_USERNAME = "your-email@example.com"
+$env:CONFLUENCE_API_TOKEN = "your-api-token"
+```
+
+For Confluence Data Center/Server:
+```
+$env:CONFLUENCE_PAT = "your-personal-access-token"
+```
+
+Then sync your documentation:
+```
+consync sync /path/to/docs
+```
+
+For more information, visit: https://github.com/yourusername/consync
+    </description>
+    <releaseNotes>https://github.com/yourusername/consync/releases/tag/v1.0.0</releaseNotes>
+
+    <dependencies>
+      <dependency id="openjdk17" version="17.0.0" />
+    </dependencies>
+  </metadata>
+
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

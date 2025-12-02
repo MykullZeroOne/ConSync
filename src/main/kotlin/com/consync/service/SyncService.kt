@@ -35,14 +35,11 @@ class SyncService(
     private val logger = LoggerFactory.getLogger(SyncService::class.java)
 
     private val fileScanner = FileScanner(
-        includePatterns = config.files.include,
-        excludePatterns = config.files.exclude
+        config = config.files
     )
 
-    private val frontmatterParser = FrontmatterParser()
     private val markdownParser = MarkdownParser(
-        titleSource = config.content.titleSource,
-        frontmatterParser = frontmatterParser
+        titleSource = config.content.titleSource
     )
 
     private val hierarchyBuilder = HierarchyBuilder(
@@ -67,12 +64,12 @@ class SyncService(
     suspend fun sync(dryRun: Boolean = false, force: Boolean = false): SyncResult {
         logger.info("Starting sync from {} to space '{}'", contentDir, config.space.key)
 
-        // Step 1: Scan local files
-        logger.info("Scanning local markdown files...")
-        val markdownFiles = fileScanner.scan(contentDir)
-        logger.info("Found {} markdown files", markdownFiles.size)
+        // Step 1 & 2: Scan and parse markdown files
+        logger.info("Scanning and parsing markdown files...")
+        val scanResult = markdownParser.parseDirectory(contentDir, config.files)
+        logger.info("Found and parsed {} documents", scanResult.documents.size)
 
-        if (markdownFiles.isEmpty()) {
+        if (scanResult.documents.isEmpty()) {
             logger.warn("No markdown files found matching include patterns")
             return SyncResult.success(
                 actionResults = emptyList(),
@@ -81,21 +78,10 @@ class SyncService(
             )
         }
 
-        // Step 2: Parse markdown files
-        logger.info("Parsing markdown documents...")
-        val documents = markdownFiles.mapNotNull { file ->
-            try {
-                markdownParser.parse(file, contentDir)
-            } catch (e: Exception) {
-                logger.error("Failed to parse {}: {}", file, e.message)
-                null
-            }
-        }
-        logger.info("Successfully parsed {} documents", documents.size)
-
         // Step 3: Build hierarchy
         logger.info("Building page hierarchy...")
-        val rootNode = hierarchyBuilder.build(documents, contentDir)
+        val hierarchyResult = hierarchyBuilder.build(scanResult)
+        val rootNode = hierarchyResult.root
         val pageCount = countPages(rootNode)
         logger.info("Built hierarchy with {} pages", pageCount)
 
@@ -142,17 +128,10 @@ class SyncService(
     suspend fun plan(force: Boolean = false): SyncPlan {
         logger.info("Generating sync plan...")
 
-        val markdownFiles = fileScanner.scan(contentDir)
-        val documents = markdownFiles.mapNotNull { file ->
-            try {
-                markdownParser.parse(file, contentDir)
-            } catch (e: Exception) {
-                logger.error("Failed to parse {}: {}", file, e.message)
-                null
-            }
-        }
+        val scanResult = markdownParser.parseDirectory(contentDir, config.files)
+        val hierarchyResult = hierarchyBuilder.build(scanResult)
+        val rootNode = hierarchyResult.root
 
-        val rootNode = hierarchyBuilder.build(documents, contentDir)
         val rootPageId = resolveRootPageId()
         val syncState = stateManager.load(config.space.key, rootPageId)
 

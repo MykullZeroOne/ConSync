@@ -44,7 +44,7 @@ class DiffService(
 
         // Process each local page
         for (pageNode in localPages) {
-            val relativePath = pageNode.relativePath
+            val relativePath = pageNode.path.toString()
             processedPaths.add(relativePath)
 
             val action = determineAction(
@@ -97,7 +97,7 @@ class DiffService(
         rootPageId: String?,
         force: Boolean
     ): SyncAction {
-        val relativePath = pageNode.relativePath
+        val relativePath = pageNode.path.toString()
         val existingState = syncState.getPage(relativePath)
 
         // Calculate content hash
@@ -204,7 +204,7 @@ class DiffService(
         val parentNode = pageNode.parent ?: return rootPageId
 
         // Look up parent's Confluence ID from sync state
-        val parentState = syncState.getPage(parentNode.relativePath)
+        val parentState = syncState.getPage(parentNode.path.toString())
         return parentState?.confluenceId ?: rootPageId
     }
 

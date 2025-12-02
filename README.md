@@ -15,9 +15,54 @@ ConSync is a Kotlin command-line application that synchronizes local Markdown do
 ### Prerequisites
 
 - JDK 17 or higher
-- Maven 3.9.x or higher
+- Maven 3.9.x or higher (for building from source)
 
-### Build from Source
+### Option 1: Automated Installer (Recommended)
+
+The easiest way to install ConSync with a single command:
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/consync.git
+cd consync
+
+# Run the installer (builds, installs, and configures credentials)
+./install.sh
+```
+
+The installer will:
+- ✓ Build ConSync from source
+- ✓ Install to `/usr/local/bin` (or `~/.consync-app`)
+- ✓ Set up authentication (API token or PAT)
+- ✓ Create a `consync` command you can run from anywhere
+- ✓ Secure your credentials with proper permissions
+
+After installation, simply run:
+
+```bash
+consync sync --dry-run /path/to/docs
+```
+
+**To uninstall:**
+
+```bash
+./uninstall.sh
+```
+
+### Option 2: Quick Setup (Alias Only)
+
+If you prefer a minimal setup with just an alias:
+
+```bash
+cd consync
+./scripts/quick-setup.sh
+```
+
+This adds an alias to your shell profile without copying files.
+
+### Option 3: Manual Build and Run
+
+Build from source and run directly:
 
 ```bash
 # Clone the repository
@@ -30,7 +75,7 @@ mvn clean package
 # The fat JAR will be at target/consync.jar
 ```
 
-### Run the Application
+**Run the application:**
 
 ```bash
 # Using the fat JAR
@@ -38,6 +83,20 @@ java -jar target/consync.jar --help
 
 # Or run directly with Maven
 mvn exec:java -Dexec.args="--help"
+
+# Create an alias for convenience
+alias consync='java -jar /path/to/consync/target/consync.jar'
+```
+
+**Set credentials manually:**
+
+```bash
+# For Confluence Cloud
+export CONFLUENCE_USERNAME="your-email@example.com"
+export CONFLUENCE_API_TOKEN="your-api-token"
+
+# For Confluence Data Center/Server
+export CONFLUENCE_PAT="your-personal-access-token"
 ```
 
 ## Configuration

@@ -25,3 +25,25 @@ replay_pid*
 
 # Kotlin Gradle plugin data, see https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
 .kotlin/
+
+# ConSync credentials and state files
+.consync/
+.consync-app/
+**/credentials
+*.env
+.env.local
+
+# Maven target directory (if not already ignored)
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

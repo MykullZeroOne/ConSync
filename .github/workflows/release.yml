@@ -1,0 +1,393 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+
+env:
+  JAVA_VERSION: '17'
+  JAVA_DISTRIBUTION: 'temurin'
+
+jobs:
+  build:
+    name: Build Release Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          cache: maven
+
+      - name: Get version from tag
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Release version: $VERSION"
+
+      - name: Update version in pom.xml
+        run: |
+          mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }}
+          mvn versions:commit
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Run tests
+        run: mvn test
+
+      - name: Create release directory
+        run: mkdir -p release
+
+      - name: Package artifacts
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+
+          # Copy JAR
+          cp target/consync.jar release/consync-${VERSION}.jar
+          cp target/consync.jar release/consync.jar
+
+          # Create checksums
+          cd release
+          sha256sum consync-${VERSION}.jar > consync-${VERSION}.jar.sha256
+          sha256sum consync.jar > consync.jar.sha256
+          cd ..
+
+      - name: Create Unix installer package
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          mkdir -p release/consync-${VERSION}-unix
+
+          # Copy files
+          cp target/consync.jar release/consync-${VERSION}-unix/
+          cp install.sh release/consync-${VERSION}-unix/
+          cp uninstall.sh release/consync-${VERSION}-unix/
+          cp -r scripts release/consync-${VERSION}-unix/
+          cp README.md release/consync-${VERSION}-unix/
+          cp INSTALL.md release/consync-${VERSION}-unix/
+
+          # Create install script that doesn't need Maven
+          cat > release/consync-${VERSION}-unix/install.sh << 'EOF'
+          #!/bin/bash
+          # ConSync Installer (Standalone)
+          set -e
+
+          BLUE='\033[0;34m'
+          GREEN='\033[0;32m'
+          YELLOW='\033[1;33m'
+          NC='\033[0m'
+
+          echo -e "${BLUE}ConSync Installer v${VERSION}${NC}"
+          echo ""
+
+          # Check Java
+          if ! command -v java &> /dev/null; then
+              echo -e "${RED}Error: Java 17+ is required${NC}"
+              exit 1
+          fi
+
+          # Install directory
+          CONSYNC_HOME="$HOME/.consync-app"
+          mkdir -p "$CONSYNC_HOME"
+
+          # Copy JAR
+          cp consync.jar "$CONSYNC_HOME/"
+
+          # Create wrapper
+          cat > "$CONSYNC_HOME/consync" << 'WRAPPER'
+          #!/bin/bash
+          CONSYNC_JAR="$HOME/.consync-app/consync.jar"
+          if [ -f "$HOME/.consync-app/credentials" ]; then
+              source "$HOME/.consync-app/credentials"
+          fi
+          exec java -jar "$CONSYNC_JAR" "$@"
+          WRAPPER
+
+          chmod +x "$CONSYNC_HOME/consync"
+
+          # Link to PATH
+          INSTALL_DIR="/usr/local/bin"
+          if [ -w "$INSTALL_DIR" ]; then
+              ln -sf "$CONSYNC_HOME/consync" "$INSTALL_DIR/consync"
+          else
+              sudo ln -sf "$CONSYNC_HOME/consync" "$INSTALL_DIR/consync"
+          fi
+
+          echo -e "${GREEN}✓ ConSync installed successfully!${NC}"
+          echo ""
+          echo "Run: consync --version"
+          EOF
+
+          chmod +x release/consync-${VERSION}-unix/install.sh
+
+          # Create tarball
+          cd release
+          tar -czf consync-${VERSION}-unix.tar.gz consync-${VERSION}-unix/
+          sha256sum consync-${VERSION}-unix.tar.gz > consync-${VERSION}-unix.tar.gz.sha256
+          cd ..
+
+      - name: Create Windows package
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          mkdir -p release/consync-${VERSION}-windows
+
+          # Copy files
+          cp target/consync.jar release/consync-${VERSION}-windows/
+          cp README.md release/consync-${VERSION}-windows/
+          cp INSTALL.md release/consync-${VERSION}-windows/
+
+          # Create Windows batch file
+          cat > release/consync-${VERSION}-windows/consync.bat << 'EOF'
+          @echo off
+          setlocal
+
+          REM ConSync Windows Launcher
+          set "CONSYNC_JAR=%~dp0consync.jar"
+
+          if not exist "%CONSYNC_JAR%" (
+              echo Error: ConSync JAR not found
+              exit /b 1
+          )
+
+          java -jar "%CONSYNC_JAR%" %*
+          EOF
+
+          # Create PowerShell installer
+          cat > release/consync-${VERSION}-windows/install.ps1 << 'EOF'
+          # ConSync Windows Installer
+
+          $ErrorActionPreference = "Stop"
+
+          Write-Host "ConSync Windows Installer" -ForegroundColor Blue
+          Write-Host ""
+
+          # Check Java
+          try {
+              $javaVersion = java -version 2>&1 | Select-String "version" | ForEach-Object { $_.Line }
+              Write-Host "✓ Java detected: $javaVersion" -ForegroundColor Green
+          } catch {
+              Write-Host "✗ Java 17+ is required" -ForegroundColor Red
+              Write-Host "Download from: https://adoptium.net/" -ForegroundColor Yellow
+              exit 1
+          }
+
+          # Installation directory
+          $installDir = "$env:LOCALAPPDATA\ConSync"
+          New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+
+          # Copy files
+          Copy-Item "consync.jar" -Destination $installDir
+          Copy-Item "consync.bat" -Destination $installDir
+
+          # Add to PATH
+          $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+          if ($userPath -notlike "*$installDir*") {
+              [Environment]::SetEnvironmentVariable("Path", "$userPath;$installDir", "User")
+              Write-Host "✓ Added to PATH" -ForegroundColor Green
+          }
+
+          Write-Host ""
+          Write-Host "✓ Installation complete!" -ForegroundColor Green
+          Write-Host ""
+          Write-Host "Restart your terminal and run: consync --version" -ForegroundColor Yellow
+          EOF
+
+          # Create ZIP
+          cd release
+          zip -r consync-${VERSION}-windows.zip consync-${VERSION}-windows/
+          sha256sum consync-${VERSION}-windows.zip > consync-${VERSION}-windows.zip.sha256
+          cd ..
+
+      - name: Create release notes
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          cat > release/RELEASE_NOTES.md << EOF
+          # ConSync v${VERSION}
+
+          ## Installation
+
+          ### macOS/Linux (Homebrew)
+          \`\`\`bash
+          brew tap yourusername/consync
+          brew install consync
+          \`\`\`
+
+          ### macOS/Linux (Manual)
+          \`\`\`bash
+          # Download and extract
+          wget https://github.com/yourusername/consync/releases/download/v${VERSION}/consync-${VERSION}-unix.tar.gz
+          tar -xzf consync-${VERSION}-unix.tar.gz
+          cd consync-${VERSION}-unix
+
+          # Run installer
+          ./install.sh
+          \`\`\`
+
+          ### Windows (Scoop)
+          \`\`\`powershell
+          scoop bucket add consync https://github.com/yourusername/scoop-consync
+          scoop install consync
+          \`\`\`
+
+          ### Windows (Manual)
+          \`\`\`powershell
+          # Download and extract consync-${VERSION}-windows.zip
+          # Run PowerShell as Administrator
+          .\install.ps1
+          \`\`\`
+
+          ### Direct JAR Download
+          \`\`\`bash
+          # Download JAR
+          wget https://github.com/yourusername/consync/releases/download/v${VERSION}/consync.jar
+
+          # Run
+          java -jar consync.jar --help
+          \`\`\`
+
+          ## What's Changed
+
+          See [CHANGELOG.md](https://github.com/yourusername/consync/blob/main/CHANGELOG.md)
+
+          ## Checksums
+
+          All artifacts include SHA256 checksums for verification.
+
+          \`\`\`bash
+          # Verify download
+          sha256sum -c consync-${VERSION}-unix.tar.gz.sha256
+          \`\`\`
+          EOF
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: release/
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: release/
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          name: ConSync v${{ steps.get_version.outputs.VERSION }}
+          body_path: release/RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+          files: |
+            release/consync-*.jar
+            release/consync-*.jar.sha256
+            release/consync-*-unix.tar.gz
+            release/consync-*-unix.tar.gz.sha256
+            release/consync-*-windows.zip
+            release/consync-*-windows.zip.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-homebrew:
+    name: Update Homebrew Formula
+    needs: release
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout homebrew tap
+        uses: actions/checkout@v4
+        with:
+          repository: yourusername/homebrew-consync
+          token: ${{ secrets.TAP_GITHUB_TOKEN }}
+          path: homebrew-tap
+
+      - name: Get version and SHA
+        id: get_info
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+          # Download release tarball to get SHA
+          wget https://github.com/${{ github.repository }}/releases/download/v${VERSION}/consync-${VERSION}-unix.tar.gz
+          SHA256=$(sha256sum consync-${VERSION}-unix.tar.gz | cut -d' ' -f1)
+          echo "SHA256=$SHA256" >> $GITHUB_OUTPUT
+
+      - name: Update formula
+        run: |
+          cd homebrew-tap
+
+          cat > Formula/consync.rb << EOF
+          class Consync < Formula
+            desc "Synchronize Markdown documentation with Confluence"
+            homepage "https://github.com/${{ github.repository }}"
+            url "https://github.com/${{ github.repository }}/releases/download/v${{ steps.get_info.outputs.VERSION }}/consync-${{ steps.get_info.outputs.VERSION }}-unix.tar.gz"
+            sha256 "${{ steps.get_info.outputs.SHA256 }}"
+            version "${{ steps.get_info.outputs.VERSION }}"
+            license "MIT"
+
+            depends_on "openjdk@17"
+
+            def install
+              libexec.install "consync.jar"
+
+              # Create wrapper script
+              (bin/"consync").write <<~EOS
+                #!/bin/bash
+                exec "#{Formula["openjdk@17"].opt_bin}/java" -jar "#{libexec}/consync.jar" "\$@"
+              EOS
+
+              chmod 0755, bin/"consync"
+            end
+
+            test do
+              assert_match version.to_s, shell_output("#{bin}/consync --version")
+            end
+          end
+          EOF
+
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add Formula/consync.rb
+          git commit -m "Update consync to ${{ steps.get_info.outputs.VERSION }}"
+          git push

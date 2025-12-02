@@ -54,7 +54,7 @@ class MarkdownParser(
         val (frontmatter, contentWithoutFrontmatter) = frontmatterParser.parse(rawContent)
 
         // Parse markdown AST
-        val document = parser.parse(contentWithoutFrontmatter)
+        val document = parser.parse(contentWithoutFrontmatter) as Document
 
         // Extract components
         val headings = extractHeadings(document)

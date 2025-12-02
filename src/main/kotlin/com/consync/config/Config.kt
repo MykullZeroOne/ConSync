@@ -162,7 +162,7 @@ enum class ConflictResolution {
  */
 @Serializable
 data class FilesConfig(
-    val include: List<String> = listOf("**/*.md"),
+    val include: List<String> = listOf("*.md", "**/*.md"),
     val exclude: List<String> = emptyList(),
 
     @SerialName("index_file")
