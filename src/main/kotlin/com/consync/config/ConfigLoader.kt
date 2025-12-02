@@ -2,14 +2,23 @@ package com.consync.config
 
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
+import com.consync.util.EnvLoader
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
 import kotlin.io.path.readText
 
 /**
  * Loads and parses ConSync configuration from YAML files.
+ *
+ * Supports environment variable expansion using ${VAR_NAME} syntax.
+ * Variables are resolved from:
+ * 1. .env file (if present and loadEnvFile is true)
+ * 2. System environment variables
  */
-class ConfigLoader {
+class ConfigLoader(
+    private val loadEnvFile: Boolean = true,
+    private val envFilePath: Path? = null
+) {
     private val logger = LoggerFactory.getLogger(ConfigLoader::class.java)
 
     private val yaml = Yaml(
@@ -17,6 +26,16 @@ class ConfigLoader {
             strictMode = false
         )
     )
+
+    init {
+        if (loadEnvFile) {
+            if (envFilePath != null) {
+                EnvLoader.load(envFilePath)
+            } else {
+                EnvLoader.loadDefault()
+            }
+        }
+    }
 
     /**
      * Load configuration from the specified path.
@@ -61,13 +80,15 @@ class ConfigLoader {
     /**
      * Expand environment variable references in the configuration.
      * Supports ${VAR_NAME} syntax.
+     * Looks up variables from EnvLoader (which checks .env first, then system env).
      */
     private fun expandEnvironmentVariables(content: String): String {
         val envVarPattern = """\$\{([A-Za-z_][A-Za-z0-9_]*)}""".toRegex()
 
         return envVarPattern.replace(content) { matchResult ->
             val varName = matchResult.groupValues[1]
-            val value = System.getenv(varName)
+            // Use EnvLoader which checks .env vars first, then system env
+            val value = EnvLoader.get(varName)
 
             if (value != null) {
                 logger.debug("Expanded environment variable: $varName")
@@ -76,6 +97,22 @@ class ConfigLoader {
                 logger.warn("Environment variable not found: $varName")
                 matchResult.value // Keep original if not found
             }
+        }
+    }
+
+    companion object {
+        /**
+         * Create a ConfigLoader that loads .env from the specified directory.
+         */
+        fun withEnvFile(envFilePath: Path): ConfigLoader {
+            return ConfigLoader(loadEnvFile = true, envFilePath = envFilePath)
+        }
+
+        /**
+         * Create a ConfigLoader that doesn't load any .env file.
+         */
+        fun withoutEnvFile(): ConfigLoader {
+            return ConfigLoader(loadEnvFile = false)
         }
     }
 }

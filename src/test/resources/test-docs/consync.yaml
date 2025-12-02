@@ -1,0 +1,33 @@
+# Test configuration for integration tests
+confluence:
+  base_url: ${CONFLUENCE_BASE_URL}
+  username: ${CONFLUENCE_USERNAME}
+  api_token: ${CONFLUENCE_API_TOKEN}
+  timeout: 30
+  retry_count: 3
+
+space:
+  key: ${CONFLUENCE_SPACE_KEY}
+  root_page_id: ${CONFLUENCE_ROOT_PAGE_ID}
+
+content:
+  title_source: frontmatter
+  toc:
+    enabled: true
+    depth: 3
+    position: top
+
+sync:
+  delete_orphans: false
+  state_file: .consync/state.json
+
+files:
+  include:
+    - "**/*.md"
+  exclude:
+    - "**/node_modules/**"
+    - "**/.git/**"
+  index_file: index.md
+
+logging:
+  level: debug
