@@ -68,7 +68,14 @@
         <mockk.version>1.13.8</mockk.version>
         <wiremock.version>3.3.1</wiremock.version>
     </properties>
-
+	<repositories>
+		<repository>
+				<id>github</id>
+				<url>https://maven.pkg.github.com/MykullZeroOne/ConSync</url>
+			</repository>
+		
+	</repositories>
+	
     <dependencyManagement>
         <dependencies>
             <!-- Kotlin Standard Library -->
