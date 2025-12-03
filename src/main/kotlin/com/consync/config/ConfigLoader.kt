@@ -94,7 +94,7 @@ class ConfigLoader(
                 logger.debug("Expanded environment variable: $varName")
                 value
             } else {
-                logger.warn("Environment variable not found: $varName")
+                logger.debug("Environment variable not found: $varName (keeping original)")
                 matchResult.value // Keep original if not found
             }
         }

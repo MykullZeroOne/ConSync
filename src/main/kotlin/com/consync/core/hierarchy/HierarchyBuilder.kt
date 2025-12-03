@@ -64,25 +64,59 @@ class HierarchyBuilder(
             .filter { it != rootDoc }
             .groupBy { it.relativePath.parent ?: Path("") }
 
+        // Pre-create directory nodes for all directories that have index.md files
+        // This prevents duplicate nodes when processing documents
+        // Sort by depth (shallowest first) so parent directories are created before children
+        val indexDocs = documents
+            .filter { it.isIndex && it != rootDoc }
+            .sortedBy { it.relativePath.nameCount }
+        logger.info("Found ${indexDocs.size} index.md files to pre-create")
+        for (doc in indexDocs) {
+            val dirPath = doc.relativePath.parent ?: Path("")
+            logger.info("Processing index.md: ${doc.relativePath} -> dirPath: $dirPath")
+            if (!nodesByPath.containsKey(dirPath)) {
+                // Create node for this directory using its index.md
+                val node = PageNode(
+                    id = dirPath.toString(),
+                    title = doc.title,
+                    path = dirPath,
+                    document = doc,
+                    weight = doc.frontmatter.weight ?: 0
+                )
+
+                // Ensure parent of this directory exists
+                val parentPath = dirPath.parent ?: Path("")
+                ensureParentChain(parentPath, nodesByPath, nodesById, virtualNodes, documents)
+
+                // Add to parent
+                val parent = nodesByPath[parentPath] ?: root
+                parent.addChild(node)
+
+                nodesByPath[dirPath] = node
+                nodesByPath[doc.relativePath] = node  // Map both dir and index.md to same node
+                nodesById[node.id] = node
+
+                logger.info("Pre-created directory node for: $dirPath from ${doc.relativePath}")
+            } else {
+                logger.info("Directory node already exists for: $dirPath")
+            }
+        }
+
         // Process documents, creating directory structure as needed
         for (doc in documents.filter { it != rootDoc }) {
             try {
-                // Skip index.md files that already have nodes created for their directories
-                if (doc.isIndex) {
-                    val dirPath = doc.relativePath.parent ?: Path("")
-                    if (nodesByPath.containsKey(dirPath)) {
-                        // Directory node already created in ensureParentChain with this index.md
-                        // Just update the path mapping to point to the directory node
-                        nodesByPath[doc.relativePath] = nodesByPath[dirPath]!!
-                        continue
-                    }
+                val parentPath = getParentPath(doc)
+
+                // Ensure parent chain exists (this may create a node for this doc's directory)
+                ensureParentChain(parentPath, nodesByPath, nodesById, virtualNodes, documents)
+
+                // Skip index.md files that were already processed in the pre-creation phase
+                if (doc.isIndex && nodesByPath.containsKey(doc.relativePath)) {
+                    logger.debug("Skipping already-processed index.md: ${doc.relativePath}")
+                    continue
                 }
 
                 val node = createNodeForDocument(doc)
-                val parentPath = getParentPath(doc)
-
-                // Ensure parent chain exists
-                ensureParentChain(parentPath, nodesByPath, nodesById, virtualNodes, documents)
 
                 // Add to parent
                 val parent = nodesByPath[parentPath] ?: root
