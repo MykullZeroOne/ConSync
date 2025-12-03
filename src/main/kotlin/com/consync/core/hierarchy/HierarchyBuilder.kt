@@ -67,6 +67,17 @@ class HierarchyBuilder(
         // Process documents, creating directory structure as needed
         for (doc in documents.filter { it != rootDoc }) {
             try {
+                // Skip index.md files that already have nodes created for their directories
+                if (doc.isIndex) {
+                    val dirPath = doc.relativePath.parent ?: Path("")
+                    if (nodesByPath.containsKey(dirPath)) {
+                        // Directory node already created in ensureParentChain with this index.md
+                        // Just update the path mapping to point to the directory node
+                        nodesByPath[doc.relativePath] = nodesByPath[dirPath]!!
+                        continue
+                    }
+                }
+
                 val node = createNodeForDocument(doc)
                 val parentPath = getParentPath(doc)
 

@@ -1,0 +1,107 @@
+{
+    "version": 1,
+    "spaceKey": "RDDO",
+    "rootPageId": null,
+    "lastSync": "2025-12-03T14:49:16.675154Z",
+    "pages": {
+        "getting-started/index.md": {
+            "confluenceId": "695042050",
+            "contentHash": "sha256:88cc0162aff5c0f7029b3e288855f80287336faecbb2e53379ea140cc6916944",
+            "title": "Getting Started",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:10.308466Z",
+            "lastSynced": "2025-12-03T14:49:10.308482Z"
+        },
+        "guides": {
+            "confluenceId": "695074817",
+            "contentHash": "sha256:6de17ccd6ec8f1c6827275cf32ec279b8e77848ee694ccbf95cfc30cabeff22a",
+            "title": "Guides",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:11.074989Z",
+            "lastSynced": "2025-12-03T14:49:11.075033Z"
+        },
+        "reference": {
+            "confluenceId": "694910978",
+            "contentHash": "sha256:9a6ad93f4740eb8c77326b07b0aae1692271d12f7b7e45be9fb7d55f64cf9fdd",
+            "title": "Reference",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:11.821027Z",
+            "lastSynced": "2025-12-03T14:49:11.821046Z"
+        },
+        "getting-started/installation.md": {
+            "confluenceId": "694878210",
+            "contentHash": "sha256:9e9f2b44a87d24d52e9de1ed65ff12b8d04904f489dfdeb692d3541e6a124144",
+            "title": "Installation",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:12.511675Z",
+            "lastSynced": "2025-12-03T14:49:12.511694Z"
+        },
+        "getting-started/quickstart.md": {
+            "confluenceId": "695107585",
+            "contentHash": "sha256:bb0c76b3bc176fae337f6e36d9144de25327f8be1ebdb343fcc40936b85a442b",
+            "title": "Quickstart",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:13.020809Z",
+            "lastSynced": "2025-12-03T14:49:13.020855Z"
+        },
+        "guides/advanced": {
+            "confluenceId": "695140353",
+            "contentHash": "sha256:00d6f0a3489a09e7908d1c3f4f08ba78f2b9673f2c2612c9348e02e132f725b4",
+            "title": "Advanced",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:13.630248Z",
+            "lastSynced": "2025-12-03T14:49:13.630291Z"
+        },
+        "guides/configuration.md": {
+            "confluenceId": "695042070",
+            "contentHash": "sha256:a887c0f47456463f9ffc7954f2ccd783b657e8f7750d80a7a13775cf5a29d28a",
+            "title": "Configuration",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:14.268304Z",
+            "lastSynced": "2025-12-03T14:49:14.268317Z"
+        },
+        "guides/usage.md": {
+            "confluenceId": "695173121",
+            "contentHash": "sha256:ef25d087bf16395cf00ac23a7105074369a51559b2e43c65725f0ffd95bd4e66",
+            "title": "Usage",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:14.860542Z",
+            "lastSynced": "2025-12-03T14:49:14.860588Z"
+        },
+        "reference/configuration-options.md": {
+            "confluenceId": "695205889",
+            "contentHash": "sha256:93a4a228e7a59891300c1b70d3057c6c09dba07fd5d06d3a456cc024fb7c1bcd",
+            "title": "Configuration Options",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:15.525953Z",
+            "lastSynced": "2025-12-03T14:49:15.525969Z"
+        },
+        "guides/advanced/authentication.md": {
+            "confluenceId": "695238657",
+            "contentHash": "sha256:03f7faf93bfe55243564a348d367da71d8846d56770ce6205ec6b065a1af916c",
+            "title": "Authentication",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:16.138105Z",
+            "lastSynced": "2025-12-03T14:49:16.138151Z"
+        },
+        "guides/advanced/hierarchy.md": {
+            "confluenceId": "695271425",
+            "contentHash": "sha256:a457f2692459a631d8ae6c57dec5705a3f4c12e908ec34ea0a4d4b05bea1915a",
+            "title": "Hierarchy",
+            "parentId": null,
+            "version": 1,
+            "lastModified": "2025-12-03T14:49:16.675036Z",
+            "lastSynced": "2025-12-03T14:49:16.675077Z"
+        }
+    }
+}

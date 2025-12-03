@@ -177,13 +177,39 @@ class SyncService(
         // If ID is configured, use it directly
         config.space.rootPageId?.let { return it }
 
-        // If title is configured, look it up
+        // If title is configured, look it up or create it
         config.space.rootPageTitle?.let { title ->
             try {
-                val page = client.getPageByTitle(config.space.key, title)
-                return page?.id
+                // Try to find existing page
+                val existingPage = client.getPageByTitle(config.space.key, title)
+                if (existingPage != null) {
+                    logger.info("Found existing root page '{}' with ID: {}", title, existingPage.id)
+                    return existingPage.id
+                }
+
+                // Page doesn't exist, create it
+                logger.info("Creating root page '{}'", title)
+                val content = """
+                    <p>This is the root page for ConSync documentation.</p>
+                    <p>All synced content will appear as child pages below.</p>
+                """.trimIndent()
+
+                val request = com.consync.client.confluence.model.CreatePageRequest(
+                    title = title,
+                    space = com.consync.client.confluence.model.SpaceReference(key = config.space.key),
+                    body = com.consync.client.confluence.model.Body(
+                        storage = com.consync.client.confluence.model.Storage(
+                            value = content,
+                            representation = "storage"
+                        )
+                    )
+                )
+                val createdPage = client.createPage(request)
+                logger.info("Created root page '{}' with ID: {}", title, createdPage.id)
+                return createdPage.id
             } catch (e: Exception) {
-                logger.warn("Could not find root page by title '{}': {}", title, e.message)
+                logger.error("Failed to resolve root page by title '{}': {}", title, e.message, e)
+                throw RuntimeException("Failed to create or find root page '$title'", e)
             }
         }
 

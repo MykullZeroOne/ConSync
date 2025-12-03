@@ -6,10 +6,10 @@ confluence:
   # Base URL of your Confluence instance
   # For Cloud: https://your-domain.atlassian.net/wiki
   # For Data Center/Server: https://confluence.yourcompany.com
-  base_url: "https://your-domain.atlassian.net/wiki"
+  base_url: "https://revfcu.atlassian.net/wiki"
 
   # Username (email for Cloud)
-  username: "your-email@example.com"
+  username: "msmith@revfcu.com"
 
   # API token (for Confluence Cloud)
   # Create at: https://id.atlassian.com/manage-profile/security/api-tokens
@@ -29,10 +29,10 @@ confluence:
 # Confluence space configuration
 space:
   # Space key (visible in Confluence URL)
-  key: "DOCS"
+  key: "RDDO"
 
   # Optional: Space display name
-  name: "Documentation"
+  name: "REV DEV OPS"
 
   # Optional: Root page ID (if you want to sync under a specific page)
   # root_page_id: "123456789"
