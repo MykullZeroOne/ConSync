@@ -221,16 +221,16 @@ jobs:
 
           ## Installation
 
-          ### macOS/Linux (Homebrew)
-          \`\`\`bash
-          brew tap yourusername/consync
-          brew install consync
+          ### Windows (Scoop)
+          \`\`\`powershell
+          scoop bucket add consync https://github.com/MykullZeroOne/scoop-consync
+          scoop install consync
           \`\`\`
 
           ### macOS/Linux (Manual)
           \`\`\`bash
           # Download and extract
-          wget https://github.com/yourusername/consync/releases/download/v${VERSION}/consync-${VERSION}-unix.tar.gz
+          wget https://github.com/MykullZeroOne/ConSync/releases/download/v${VERSION}/consync-${VERSION}-unix.tar.gz
           tar -xzf consync-${VERSION}-unix.tar.gz
           cd consync-${VERSION}-unix
 
@@ -238,31 +238,35 @@ jobs:
           ./install.sh
           \`\`\`
 
-          ### Windows (Scoop)
-          \`\`\`powershell
-          scoop bucket add consync https://github.com/yourusername/scoop-consync
-          scoop install consync
-          \`\`\`
-
           ### Windows (Manual)
           \`\`\`powershell
-          # Download and extract consync-${VERSION}-windows.zip
-          # Run PowerShell as Administrator
+          # Download consync-${VERSION}-windows.zip from the Assets below
+          # Extract and run PowerShell as Administrator:
           .\install.ps1
           \`\`\`
 
           ### Direct JAR Download
           \`\`\`bash
           # Download JAR
-          wget https://github.com/yourusername/consync/releases/download/v${VERSION}/consync.jar
+          wget https://github.com/MykullZeroOne/ConSync/releases/download/v${VERSION}/consync-${VERSION}.jar
 
           # Run
-          java -jar consync.jar --help
+          java -jar consync-${VERSION}.jar --help
           \`\`\`
+
+          ## Requirements
+
+          - Java 21 or higher
+
+          ## Documentation
+
+          - [Complete Installation Guide](https://github.com/MykullZeroOne/ConSync/blob/main/INSTALLATION.md)
+          - [Quick Start](https://github.com/MykullZeroOne/ConSync/blob/main/examples/getting-started/quickstart.md)
+          - [Configuration Guide](https://github.com/MykullZeroOne/ConSync/blob/main/examples/guides/configuration.md)
 
           ## What's Changed
 
-          See [CHANGELOG.md](https://github.com/yourusername/consync/blob/main/CHANGELOG.md)
+          See [CHANGELOG.md](https://github.com/MykullZeroOne/ConSync/blob/main/CHANGELOG.md)
 
           ## Checksums
 
