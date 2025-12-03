@@ -4,8 +4,8 @@
     "homepage": "https://github.com/MykullZeroOne/consync",
     "license": "MIT",
     "notes": [
-        "ConSync requires Java 17 or higher.",
-        "Install Java: scoop install openjdk17",
+        "ConSync requires Java 21 or higher.",
+        "Install Java: scoop install openjdk",
         "",
         "Set up authentication:",
         "For Confluence Cloud:",
@@ -18,10 +18,10 @@
         "Get started: consync --help"
     ],
     "suggest": {
-        "JDK": "java/openjdk17"
+        "JDK": "java/openjdk"
     },
     "url": "https://github.com/MykullZeroOne/consync/releases/download/v0.1.0/consync-0.1.0-windows.zip",
-    "hash": "REPLACE_WITH_ACTUAL_SHA256",
+    "hash": "3fcbdda4860210166f176785a19272b938d974062d8cb6746e7af47d231a4661",
     "extract_dir": "consync-0.1.0-windows",
     "bin": "consync.bat",
     "shortcuts": [
@@ -34,8 +34,8 @@
         "github": "https://github.com/MykullZeroOne/consync"
     },
     "autoupdate": {
-        "url": "https://github.com/MykullZeroOne/consync/releases/download/v0.1.0/consync-0.1.0-windows.zip",
-        "extract_dir": "consync-0.1.0-windows",
+        "url": "https://github.com/MykullZeroOne/consync/releases/download/v$version/consync-$version-windows.zip",
+        "extract_dir": "consync-$version-windows",
         "hash": {
             "url": "$url.sha256"
         }
