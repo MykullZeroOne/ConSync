@@ -316,6 +316,31 @@
     </distributionManagement>
 
     <profiles>
+        <!-- Profile for syncing documentation to Confluence -->
+        <profile>
+            <id>sync-docs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.consync</groupId>
+                        <artifactId>consync-maven-plugin</artifactId>
+                        <version>${project.version}</version>
+                        <configuration>
+                            <baseUrl>https://revfcu.atlassian.net/wiki</baseUrl>
+                            <username>msmith@revfcu.com</username>
+                            <apiToken>${env.CONFLUENCE_API_TOKEN}</apiToken>
+                            <spaceKey>RDDO</spaceKey>
+                            <rootPageTitle>ConSync Documentation</rootPageTitle>
+                            <sourceDirectory>${project.basedir}/examples</sourceDirectory>
+                            <dryRun>false</dryRun>
+                            <deleteOrphans>false</deleteOrphans>
+                            <tocEnabled>true</tocEnabled>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!-- Profile for Maven Central deployment (use only when ready) -->
         <profile>
             <id>central</id>
