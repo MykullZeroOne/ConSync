@@ -1,5 +1,6 @@
 package com.consync.service
 
+import com.consync.client.confluence.ConfluenceClient
 import com.consync.config.Config
 import com.consync.core.converter.ConfluenceConverter
 import com.consync.core.hierarchy.PageNode
@@ -12,15 +13,22 @@ import java.security.MessageDigest
  *
  * Compares the local page hierarchy with the persisted sync state and
  * current Confluence state to determine what sync actions are needed.
+ *
+ * When local state is missing, queries Confluence directly to detect
+ * existing pages and avoid duplicate creation errors.
  */
 class DiffService(
     private val config: Config,
-    private val converter: ConfluenceConverter
+    private val converter: ConfluenceConverter,
+    private val client: ConfluenceClient
 ) {
     private val logger = LoggerFactory.getLogger(DiffService::class.java)
 
     /**
      * Generate a sync plan by comparing local pages with sync state.
+     *
+     * When pages are missing from local state, queries Confluence to check
+     * if they already exist to avoid duplicate creation errors.
      *
      * @param rootNode The root of the local page hierarchy
      * @param syncState The current sync state
@@ -28,7 +36,7 @@ class DiffService(
      * @param force If true, update all pages regardless of content hash
      * @return A sync plan with all required actions
      */
-    fun generatePlan(
+    suspend fun generatePlan(
         rootNode: PageNode,
         syncState: SyncState,
         confluencePages: Map<String, String> = emptyMap(),
@@ -89,8 +97,11 @@ class DiffService(
 
     /**
      * Determine the sync action needed for a single page.
+     *
+     * When a page is not in local state, queries Confluence to check if it
+     * already exists before marking it for creation.
      */
-    private fun determineAction(
+    private suspend fun determineAction(
         pageNode: PageNode,
         syncState: SyncState,
         confluencePages: Map<String, String>,
@@ -108,8 +119,46 @@ class DiffService(
         // Determine parent ID
         val parentId = resolveParentId(pageNode, syncState, rootPageId)
 
-        // Case 1: New page (not in sync state)
+        // Case 1: New page (not in sync state) - check Confluence before creating
         if (existingState == null) {
+            // Query Confluence to see if page already exists by title
+            logger.debug("Page '{}' not in local state, checking Confluence...", relativePath)
+            val confluencePage = try {
+                client.getPageByTitle(config.space.key, pageNode.title)
+            } catch (e: Exception) {
+                logger.warn("Failed to query Confluence for page '{}': {}", pageNode.title, e.message)
+                null
+            }
+
+            if (confluencePage != null) {
+                // Page exists in Confluence but not in local state
+                logger.info("Found existing page in Confluence: '{}' (id: {}), will update instead of create",
+                    pageNode.title, confluencePage.id)
+
+                // Fetch the page content to compare
+                val confluenceContentHash = hashContent(confluencePage.body?.storage?.value ?: "")
+
+                // Treat as update if content differs, or skip if identical
+                val needsUpdate = force || confluenceContentHash != contentHash
+
+                return if (needsUpdate) {
+                    SyncAction.update(
+                        pageNode = pageNode,
+                        confluenceId = confluencePage.id,
+                        parentId = parentId,
+                        contentHash = contentHash,
+                        reason = "Found existing page (not in local state)"
+                    )
+                } else {
+                    SyncAction.skip(
+                        pageNode = pageNode,
+                        confluenceId = confluencePage.id,
+                        reason = "Found existing page with matching content"
+                    )
+                }
+            }
+
+            // Page doesn't exist in Confluence either, create it
             logger.debug("Page '{}' is new, will create", relativePath)
             return SyncAction.create(
                 pageNode = pageNode,
@@ -261,17 +310,5 @@ class DiffService(
         val digest = MessageDigest.getInstance("SHA-256")
         val hashBytes = digest.digest(content.toByteArray(Charsets.UTF_8))
         return "sha256:" + hashBytes.joinToString("") { "%02x".format(it) }
-    }
-
-    companion object {
-        /**
-         * Create a diff service from configuration.
-         */
-        fun create(config: Config): DiffService {
-            val converter = ConfluenceConverter(
-                tocConfig = config.content.toc
-            )
-            return DiffService(config, converter)
-        }
     }
 }

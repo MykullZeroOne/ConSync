@@ -50,7 +50,7 @@ class SyncService(
         tocConfig = config.content.toc
     )
 
-    private val diffService = DiffService(config, converter)
+    private val diffService = DiffService(config, converter, client)
 
     private val executor = SyncExecutor(config, client, converter, stateManager)
 

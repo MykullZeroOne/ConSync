@@ -1,5 +1,6 @@
 package com.consync.service
 
+import com.consync.client.confluence.ConfluenceClient
 import com.consync.config.*
 import com.consync.core.converter.ConfluenceConverter
 import com.consync.core.hierarchy.PageNode
@@ -7,6 +8,9 @@ import com.consync.core.markdown.MarkdownDocument
 import com.consync.model.PageState
 import com.consync.model.SyncActionType
 import com.consync.model.SyncState
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -16,17 +20,23 @@ class DiffServiceTest {
 
     private lateinit var config: Config
     private lateinit var converter: ConfluenceConverter
+    private lateinit var client: ConfluenceClient
     private lateinit var diffService: DiffService
 
     @BeforeEach
     fun setup() {
         config = createTestConfig()
         converter = ConfluenceConverter(tocConfig = TocConfig(enabled = false))
-        diffService = DiffService(config, converter)
+        client = mockk<ConfluenceClient>()
+
+        // Default: no pages exist in Confluence
+        coEvery { client.getPageByTitle(any(), any()) } returns null
+
+        diffService = DiffService(config, converter, client)
     }
 
     @Test
-    fun `should create action for new page`() {
+    fun `should create action for new page`() = runBlocking {
         val rootNode = createRootNode(
             createPageNode("New Page", "new.md", "# New Page\n\nContent")
         )
@@ -42,7 +52,7 @@ class DiffServiceTest {
     }
 
     @Test
-    fun `should skip unchanged page`() {
+    fun `should skip unchanged page`() = runBlocking {
         val content = "# Page\n\nContent"
         val convertedContent = converter.convert(content)
         val contentHash = hashContent(convertedContent)
@@ -66,7 +76,7 @@ class DiffServiceTest {
     }
 
     @Test
-    fun `should update page when content changed`() {
+    fun `should update page when content changed`() = runBlocking {
         val originalContent = "# Page\n\nOriginal"
         val newContent = "# Page\n\nUpdated content"
 
@@ -89,7 +99,7 @@ class DiffServiceTest {
     }
 
     @Test
-    fun `should update page when title changed`() {
+    fun `should update page when title changed`() = runBlocking {
         val content = "# New Title\n\nContent"
         val convertedContent = converter.convert(content)
         val contentHash = hashContent(convertedContent)
@@ -112,7 +122,7 @@ class DiffServiceTest {
     }
 
     @Test
-    fun `should force update all pages when force is true`() {
+    fun `should force update all pages when force is true`() = runBlocking {
         val content = "# Page\n\nContent"
         val convertedContent = converter.convert(content)
         val contentHash = hashContent(convertedContent)
@@ -135,7 +145,7 @@ class DiffServiceTest {
     }
 
     @Test
-    fun `should delete orphaned pages when configured`() {
+    fun `should delete orphaned pages when configured`() = runBlocking {
         val rootNode = createRootNode() // Empty root
         val state = SyncState.empty("DOCS")
             .withPage("orphan.md", PageState.create(
@@ -152,9 +162,11 @@ class DiffServiceTest {
     }
 
     @Test
-    fun `should not delete orphans when not configured`() {
+    fun `should not delete orphans when not configured`() = runBlocking {
         val noDeleteConfig = config.copy(sync = config.sync.copy(deleteOrphans = false))
-        val diffServiceNoDelete = DiffService(noDeleteConfig, converter)
+        val mockClient = mockk<ConfluenceClient>()
+        coEvery { mockClient.getPageByTitle(any(), any()) } returns null
+        val diffServiceNoDelete = DiffService(noDeleteConfig, converter, mockClient)
 
         val rootNode = createRootNode()
         val state = SyncState.empty("DOCS")
@@ -171,7 +183,7 @@ class DiffServiceTest {
     }
 
     @Test
-    fun `should handle multiple pages`() {
+    fun `should handle multiple pages`() = runBlocking {
         val content1 = "# Page 1"
         val content2 = "# Page 2"
         val content3 = "# Page 3 Updated"
@@ -204,7 +216,7 @@ class DiffServiceTest {
     }
 
     @Test
-    fun `should sort actions with creates first`() {
+    fun `should sort actions with creates first`() = runBlocking {
         val rootNode = createRootNode(
             createPageNode("New", "new.md", "# New"),
             createPageNode("Existing", "existing.md", "# Existing Updated")
