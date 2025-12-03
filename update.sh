@@ -24,14 +24,11 @@ echo -e "Current version: ${YELLOW}${CURRENT_VERSION}${NC}"
 
 # Get latest release version from GitHub
 echo "Checking for updates..."
-LATEST_VERSION=$(curl -s https://api.github.com/repos/MykullZeroOne/ConSync/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+LATEST_VERSION=$(curl -s https://api.github.com/repos/MykullZeroOne/ConSync/releases/latest | grep '"tag_name"' | sed -E 's/.*"tag_name": "v?([^"]+)".*/\1/')
 if [ -z "$LATEST_VERSION" ]; then
     echo -e "${RED}Error: Could not fetch latest version${NC}"
     exit 1
 fi
-
-# Remove 'v' prefix if present
-LATEST_VERSION=${LATEST_VERSION#v}
 echo -e "Latest version: ${GREEN}${LATEST_VERSION}${NC}"
 echo ""
 
