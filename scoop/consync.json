@@ -20,9 +20,9 @@
     "suggest": {
         "JDK": "java/openjdk"
     },
-    "url": "https://github.com/MykullZeroOne/consync/releases/download/v0.1.0/consync-0.1.0-windows.zip",
-    "hash": "3fcbdda4860210166f176785a19272b938d974062d8cb6746e7af47d231a4661",
-    "extract_dir": "consync-0.1.0-windows",
+    "url": "https://github.com/MykullZeroOne/ConSync/releases/download/v0.1.1/consync-0.1.1-windows.zip",
+    "hash": "fa792dd7feda2838426f23aee4c055533bd2782ad1eddf2158cee7c9bfc222e9",
+    "extract_dir": "consync-0.1.1-windows",
     "bin": "consync.bat",
     "shortcuts": [
         [
@@ -31,10 +31,10 @@
         ]
     ],
     "checkver": {
-        "github": "https://github.com/MykullZeroOne/consync"
+        "github": "https://github.com/MykullZeroOne/ConSync"
     },
     "autoupdate": {
-        "url": "https://github.com/MykullZeroOne/consync/releases/download/v$version/consync-$version-windows.zip",
+        "url": "https://github.com/MykullZeroOne/ConSync/releases/download/v$version/consync-$version-windows.zip",
         "extract_dir": "consync-$version-windows",
         "hash": {
             "url": "$url.sha256"
