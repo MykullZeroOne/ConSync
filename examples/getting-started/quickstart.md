@@ -33,16 +33,33 @@ confluence:
 # Target space
 space:
   key: "DOCS"
+  root_page_title: "My Documentation"  # Will be created automatically if it doesn't exist
 
 # Content settings
 content:
-  root_page: "My Documentation"
+  title_source: filename
   toc:
     enabled: true
     depth: 3
+
+# Sync behavior
+sync:
+  delete_orphans: false
+  state_file: ".consync/state.json"
+
+# File patterns
+files:
+  include:
+    - "**/*.md"
+  exclude:
+    - "**/node_modules/**"
+    - "**/.git/**"
+  index_file: "index.md"
 ```
 
 **Important**: Update `base_url`, `username`, and `space.key` with your values.
+
+**Note**: The `root_page_title` will be automatically created by ConSync if it doesn't exist. All your documentation will be organized under this parent page.
 
 ## Step 3: Write Some Markdown
 
@@ -167,7 +184,7 @@ my-docs/
 Before syncing, preview what ConSync will do:
 
 ```bash
-java -jar /path/to/consync.jar sync --dry-run .
+consync sync --dry-run .
 ```
 
 You should see output like:
@@ -179,13 +196,22 @@ Configuration loaded successfully
 
 DRY RUN MODE - No changes will be made to Confluence
 
-Sync Plan:
-  CREATE: My Documentation (root)
-    CREATE: Getting Started
-    CREATE: API Documentation (parent)
-      CREATE: User API
+Sync Plan Summary
+=================
+Space: DOCS
+Local pages: 4
+Confluence pages: 0
 
-Total: 4 pages to create, 0 to update, 0 to delete
+Actions:
+  Create: 4
+  Update: 0
+  Delete: 0
+
+Pages to CREATE:
+  + My Documentation (root)
+  + Getting Started
+  + API Documentation
+  + User API
 ```
 
 ## Step 5: Sync to Confluence
@@ -193,7 +219,7 @@ Total: 4 pages to create, 0 to update, 0 to delete
 If the dry run looks good, perform the actual sync:
 
 ```bash
-java -jar /path/to/consync.jar sync .
+consync sync .
 ```
 
 ConSync will:
@@ -222,13 +248,22 @@ When you update your local markdown files:
 
 ```bash
 # Edit a file
-echo "\n## New Section\n\nNew content here." >> getting-started.md
+echo "
+
+## New Section
+
+New content here." >> getting-started.md
 
 # Sync changes
-java -jar /path/to/consync.jar sync .
+consync sync .
 ```
 
-ConSync will detect changes and update only the modified pages.
+ConSync will detect changes using content hashes and update only the modified pages.
+
+**How it works:**
+- ConSync maintains a `.consync/state.json` file that tracks the last synced state of each page
+- Only pages with content changes are updated
+- Use `--force` flag to update all pages regardless of changes
 
 ## Next Steps
 

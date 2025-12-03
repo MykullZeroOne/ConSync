@@ -42,9 +42,6 @@ space:
 
 # Content handling configuration
 content:
-  # Root page for all synced content
-  root_page: "ConSync Documentation"
-
   # How to determine page titles
   # Options: filename, frontmatter, first_heading
   title_source: filename

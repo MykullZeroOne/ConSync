@@ -22,10 +22,11 @@ This section covers:
 
 Before you begin, ensure you have:
 
-- **Java 17 or higher** - ConSync is built on the JVM
-- **Maven 3.9.x** (for building from source)
+- **Java 21 or higher** - ConSync requires Java 21+
 - **Confluence Access** - Either Cloud or Data Center/Server
 - **API Credentials** - API token (Cloud) or Personal Access Token (Server)
+
+No need to build from source - automated installers are available for Windows, macOS, and Linux!
 
 ## Basic Concepts
 
