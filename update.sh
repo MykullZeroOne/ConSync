@@ -24,9 +24,11 @@ echo -e "Current version: ${YELLOW}${CURRENT_VERSION}${NC}"
 
 # Get latest release version from GitHub
 echo "Checking for updates..."
-LATEST_VERSION=$(curl -s https://api.github.com/repos/MykullZeroOne/ConSync/releases/latest | grep '"tag_name"' | sed -E 's/.*"tag_name": "v?([^"]+)".*/\1/')
+# Try to get all releases and filter for non-draft, non-prerelease versions
+LATEST_VERSION=$(curl -s https://api.github.com/repos/MykullZeroOne/ConSync/releases | grep -m 1 '"tag_name"' | sed -E 's/.*"tag_name": "v?([^"]+)".*/\1/')
 if [ -z "$LATEST_VERSION" ]; then
     echo -e "${RED}Error: Could not fetch latest version${NC}"
+    echo "You can manually download from: https://github.com/MykullZeroOne/ConSync/releases"
     exit 1
 fi
 echo -e "Latest version: ${GREEN}${LATEST_VERSION}${NC}"
