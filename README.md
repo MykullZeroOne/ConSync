@@ -23,7 +23,7 @@ The easiest way to install ConSync with a single command:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/consync.git
+git clone https://github.com/MykullZeroOne/consync.git
 cd consync
 
 # Run the installer (builds, installs, and configures credentials)
@@ -66,7 +66,7 @@ Build from source and run directly:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/consync.git
+git clone https://github.com/MykullZeroOne/consync.git
 cd consync
 
 # Build the application

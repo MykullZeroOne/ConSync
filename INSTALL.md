@@ -5,7 +5,7 @@ Complete guide for installing ConSync on macOS, Linux, and Windows.
 ## Quick Start
 
 ```bash
-git clone https://github.com/yourusername/consync.git
+git clone https://github.com/MykullZeroOne/consync.git
 cd consync
 ./install.sh
 ```
@@ -82,7 +82,7 @@ Creates an alias without copying files:
 #### Step 1: Build ConSync
 
 ```bash
-git clone https://github.com/yourusername/consync.git
+git clone https://github.com/MykullZeroOne/consync.git
 cd consync
 mvn clean package
 ```
@@ -531,4 +531,4 @@ Having issues? Check:
 
 1. [Troubleshooting section above](#troubleshooting)
 2. [Usage Guide](examples/guides/usage.md)
-3. [GitHub Issues](https://github.com/yourusername/consync/issues)
+3. [GitHub Issues](https://github.com/MykullZeroOne/consync/issues)

@@ -40,5 +40,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multiple authentication methods (API Token, PAT)
 - Cross-platform support (macOS, Linux, Windows)
 
-[Unreleased]: https://github.com/yourusername/consync/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/yourusername/consync/releases/tag/v1.0.0
+[Unreleased]: https://github.com/MykullZeroOne/consync/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/MykullZeroOne/consync/releases/tag/v1.0.0

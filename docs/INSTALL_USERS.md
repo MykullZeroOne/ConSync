@@ -17,7 +17,7 @@ Quick installation guide for users.
 
 ```bash
 # Add ConSync tap
-brew tap yourusername/consync
+brew tap MykullZeroOne/consync
 
 # Install
 brew install consync
@@ -30,7 +30,7 @@ consync --version
 
 ```bash
 # Download latest release
-curl -LO https://github.com/yourusername/consync/releases/latest/download/consync-unix.tar.gz
+curl -LO https://github.com/MykullZeroOne/consync/releases/latest/download/consync-unix.tar.gz
 
 # Extract
 tar -xzf consync-unix.tar.gz
@@ -51,7 +51,7 @@ cd consync-*-unix
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Add ConSync tap
-brew tap yourusername/consync
+brew tap MykullZeroOne/consync
 
 # Install
 brew install consync
@@ -64,7 +64,7 @@ consync --version
 
 ```bash
 # Download latest release
-wget https://github.com/yourusername/consync/releases/latest/download/consync-unix.tar.gz
+wget https://github.com/MykullZeroOne/consync/releases/latest/download/consync-unix.tar.gz
 
 # Extract
 tar -xzf consync-unix.tar.gz
@@ -78,7 +78,7 @@ cd consync-*-unix
 
 ```bash
 # Download JAR
-wget https://github.com/yourusername/consync/releases/latest/download/consync.jar
+wget https://github.com/MykullZeroOne/consync/releases/latest/download/consync.jar
 
 # Create wrapper script
 cat > consync << 'EOF'
@@ -103,7 +103,7 @@ sudo mv consync /usr/local/bin/
 iwr -useb get.scoop.sh | iex
 
 # Add ConSync bucket
-scoop bucket add consync https://github.com/yourusername/scoop-consync
+scoop bucket add consync https://github.com/MykullZeroOne/scoop-consync
 
 # Install
 scoop install consync
@@ -132,7 +132,7 @@ consync --version
 
 ```powershell
 # Download latest release
-# Go to: https://github.com/yourusername/consync/releases/latest
+# Go to: https://github.com/MykullZeroOne/consync/releases/latest
 # Download: consync-X.X.X-windows.zip
 
 # Extract the ZIP file
@@ -146,7 +146,7 @@ cd consync-X.X.X-windows
 
 ```powershell
 # Download JAR
-# Go to: https://github.com/yourusername/consync/releases/latest
+# Go to: https://github.com/MykullZeroOne/consync/releases/latest
 # Download: consync.jar
 
 # Create batch file (consync.bat)
@@ -345,9 +345,9 @@ consync sync .             # Actually sync
 
 ## Next Steps
 
-- **Read the docs**: https://github.com/yourusername/consync
-- **See examples**: https://github.com/yourusername/consync/tree/main/examples
-- **Report issues**: https://github.com/yourusername/consync/issues
+- **Read the docs**: https://github.com/MykullZeroOne/consync
+- **See examples**: https://github.com/MykullZeroOne/consync/tree/main/examples
+- **Report issues**: https://github.com/MykullZeroOne/consync/issues
 
 ---
 
@@ -376,7 +376,7 @@ choco upgrade consync
 ### Manual
 
 Download latest release and reinstall:
-https://github.com/yourusername/consync/releases/latest
+https://github.com/MykullZeroOne/consync/releases/latest
 
 ---
 
@@ -386,7 +386,7 @@ https://github.com/yourusername/consync/releases/latest
 
 ```bash
 brew uninstall consync
-brew untap yourusername/consync
+brew untap MykullZeroOne/consync
 ```
 
 ### Scoop

@@ -124,7 +124,7 @@ GitHub Action that automatically drafts releases from PRs.
 
 **View draft**:
 
-Go to: https://github.com/yourusername/consync/releases
+Go to: https://github.com/MykullZeroOne/consync/releases
 
 ## Complete Workflow
 
