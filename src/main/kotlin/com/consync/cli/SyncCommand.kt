@@ -1,13 +1,17 @@
 package com.consync.cli
 
+import com.consync.client.confluence.ConfluenceClientFactory
 import com.consync.config.ConfigLoader
 import com.consync.config.ConfigValidator
+import com.consync.service.SyncService
+import com.consync.service.SyncStateManager
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.path
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -91,10 +95,66 @@ class SyncCommand : CliktCommand(
         echo("Configuration loaded successfully")
         echo("  Space: ${config.space.key}")
         echo("  Base URL: ${config.confluence.baseUrl}")
-
-        // TODO: Implement sync logic in Phase 6
         echo("")
-        echo("Sync functionality will be implemented in Phase 6.")
-        echo("Current phase: Project setup and configuration loading.")
+
+        // Create Confluence client
+        val client = try {
+            ConfluenceClientFactory.create(config.confluence)
+        } catch (e: Exception) {
+            echo("Error creating Confluence client: ${e.message}", err = true)
+            logger.error("Failed to create Confluence client", e)
+            throw e
+        }
+
+        // Create state manager
+        val stateDir = directory.resolve(".consync")
+        val stateManager = SyncStateManager(stateDir)
+
+        // Create sync service
+        val syncService = SyncService(
+            config = config,
+            contentDir = directory,
+            client = client,
+            stateManager = stateManager
+        )
+
+        // Perform sync
+        try {
+            val result = runBlocking {
+                syncService.sync(dryRun = dryRun, force = force)
+            }
+
+            // Display results
+            echo("")
+            echo("Sync completed ${if (result.success) "successfully" else "with errors"}")
+            echo("  Duration: ${result.duration.toMillis()}ms")
+            echo("")
+            echo("Results:")
+            echo("  Created: ${result.createdCount}")
+            echo("  Updated: ${result.updatedCount}")
+            echo("  Deleted: ${result.deletedCount}")
+            echo("  Moved: ${result.movedCount}")
+            echo("  Skipped: ${result.skippedCount}")
+            if (result.failedCount > 0) {
+                echo("  Failed: ${result.failedCount}")
+            }
+
+            if (result.failedActions.isNotEmpty()) {
+                echo("")
+                echo("Failures:")
+                result.failedActions.forEach { actionResult ->
+                    echo("  - ${actionResult.title}: ${actionResult.errorMessage ?: "Unknown error"}")
+                }
+            }
+
+            if (!result.success) {
+                throw RuntimeException("Sync completed with errors")
+            }
+        } catch (e: Exception) {
+            echo("", err = true)
+            echo("Sync failed: ${e.message}", err = true)
+            logger.error("Sync operation failed", e)
+            throw e
+        }
     }
 }
