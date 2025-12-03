@@ -329,7 +329,7 @@ jobs:
     name: Update Homebrew Formula
     needs: release
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && secrets.TAP_GITHUB_TOKEN != ''
 
     steps:
       - name: Checkout homebrew tap
