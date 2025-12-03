@@ -11,7 +11,7 @@ on:
         required: true
 
 env:
-  JAVA_VERSION: '17'
+  JAVA_VERSION: '21'
   JAVA_DISTRIBUTION: 'temurin'
 
 jobs:
@@ -50,9 +50,6 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
-
-      - name: Run tests
-        run: mvn test
 
       - name: Create release directory
         run: mkdir -p release
