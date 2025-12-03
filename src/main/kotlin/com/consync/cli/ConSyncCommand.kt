@@ -20,7 +20,7 @@ class ConSyncCommand : CliktCommand(
         .flag(default = false)
 
     init {
-        versionOption("0.1.0-SNAPSHOT")
+        versionOption("0.1.2")
         subcommands(
             SyncCommand(),
             ValidateCommand(),
