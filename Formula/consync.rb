@@ -7,9 +7,9 @@
 class Consync < Formula
   desc "Synchronize Markdown documentation with Confluence"
   homepage "https://github.com/yourusername/consync"
-  url "https://github.com/yourusername/consync/releases/download/v1.0.0/consync-1.0.0-unix.tar.gz"
+  url "https://github.com/yourusername/consync/releases/download/v0.1.0/consync-0.1.0-unix.tar.gz"
   sha256 "REPLACE_WITH_ACTUAL_SHA256"
-  version "1.0.0"
+  version "0.1.0"
   license "MIT"
 
   depends_on "openjdk@17"

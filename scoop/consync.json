@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "Synchronize Markdown documentation with Confluence",
     "homepage": "https://github.com/yourusername/consync",
     "license": "MIT",
@@ -20,9 +20,9 @@
     "suggest": {
         "JDK": "java/openjdk17"
     },
-    "url": "https://github.com/yourusername/consync/releases/download/v1.0.0/consync-1.0.0-windows.zip",
+    "url": "https://github.com/yourusername/consync/releases/download/v0.1.0/consync-0.1.0-windows.zip",
     "hash": "REPLACE_WITH_ACTUAL_SHA256",
-    "extract_dir": "consync-1.0.0-windows",
+    "extract_dir": "consync-0.1.0-windows",
     "bin": "consync.bat",
     "shortcuts": [
         [
@@ -34,8 +34,8 @@
         "github": "https://github.com/yourusername/consync"
     },
     "autoupdate": {
-        "url": "https://github.com/yourusername/consync/releases/download/v$version/consync-$version-windows.zip",
-        "extract_dir": "consync-$version-windows",
+        "url": "https://github.com/yourusername/consync/releases/download/v0.1.0/consync-0.1.0-windows.zip",
+        "extract_dir": "consync-0.1.0-windows",
         "hash": {
             "url": "$url.sha256"
         }

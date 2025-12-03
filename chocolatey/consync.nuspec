@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>consync</id>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
     <packageSourceUrl>https://github.com/yourusername/consync</packageSourceUrl>
     <owners>yourusername</owners>
 
@@ -55,7 +55,7 @@ consync sync /path/to/docs
 
 For more information, visit: https://github.com/yourusername/consync
     </description>
-    <releaseNotes>https://github.com/yourusername/consync/releases/tag/v1.0.0</releaseNotes>
+    <releaseNotes>https://github.com/yourusername/consync/releases/tag/v0.1.0/releaseNotes>
 
     <dependencies>
       <dependency id="openjdk17" version="17.0.0" />

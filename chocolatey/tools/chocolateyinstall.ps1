@@ -3,7 +3,7 @@
 $ErrorActionPreference = 'Stop'
 
 $packageName = 'consync'
-$version = '1.0.0'
+$version = '0.1.0'
 $url = "https://github.com/yourusername/consync/releases/download/v$version/consync-$version-windows.zip"
 $checksum = 'REPLACE_WITH_ACTUAL_SHA256'
 $checksumType = 'sha256'
